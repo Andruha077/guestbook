@@ -1,0 +1,573 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книга відгуків</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            padding: 45px 20px;
+            background: linear-gradient(135deg, #eef2ff, #f8faff, #e8efff);
+            color: #172554;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* Заголовок */
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px;
+            height: 65px;
+            margin-bottom: 15px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #60a5fa, #4f46e5);
+            color: white;
+            font-size: 32px;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        }
+
+        h1 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        /* Форма */
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 22px;
+            box-shadow: 0 15px 40px rgba(30, 64, 175, 0.09);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            font-weight: 600;
+            color: #334155;
+            font-size: 15px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px 17px;
+            border: 1px solid #dbe3f0;
+            border-radius: 12px;
+            background: #f8faff;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1e293b;
+            outline: none;
+            transition: 0.25s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Кнопка */
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #4338ca);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 7px 18px rgba(59, 130, 246, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Повідомлення */
+
+        #message {
+            display: none;
+            margin-top: 17px;
+            padding: 13px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        #message.success {
+            display: block;
+            color: #15803d;
+            background: #dcfce7;
+        }
+
+        #message.error {
+            display: block;
+            color: #b91c1c;
+            background: #fee2e2;
+        }
+
+        /* Заголовок відгуків */
+
+        .reviews-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 25px;
+            font-weight: 750;
+        }
+
+        .reviews-count {
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Картка відгуку */
+
+        .comment {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            margin-bottom: 14px;
+            border-radius: 17px;
+            border: 1px solid #edf1f8;
+            box-shadow: 0 6px 18px rgba(30, 64, 175, 0.05);
+            transition: 0.25s;
+            animation: appear 0.35s ease;
+        }
+
+        .comment:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.1);
+        }
+
+        .avatar {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #4f46e5);
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .comment-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .comment-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 7px;
+        }
+
+        .comment-author {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            overflow-wrap: anywhere;
+        }
+
+        .comment-date {
+            color: #94a3b8;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .comment-text {
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 35px 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Адаптація для телефонів */
+
+        @media (max-width: 600px) {
+            body {
+                padding: 25px 13px;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .form-card {
+                padding: 20px;
+                border-radius: 17px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .comment {
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .avatar {
+                width: 42px;
+                height: 42px;
+                font-size: 17px;
+            }
+
+            .comment-top {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .comment-date {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div class="logo">★</div>
+        <h1>Книга відгуків</h1>
+        <p class="subtitle">Ваші думки важливі для нас!</p>
+    </header>
+
+    <section class="form-card">
+
+        <form id="commentForm">
+
+            <div class="form-group">
+                <label for="author">Ваше ім'я</label>
+                <input
+                        type="text"
+                        id="author"
+                        name="author"
+                        maxlength="64"
+                        placeholder="Як до вас звертатися?"
+                        required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="text">Ваш відгук</label>
+                <textarea
+                        id="text"
+                        name="text"
+                        maxlength="1000"
+                        placeholder="Поділіться своїми враженнями..."
+                        required
+                ></textarea>
+            </div>
+
+            <button type="submit" id="submitButton">
+                ✈ Залишити відгук
+            </button>
+
+            <p id="message" role="status" aria-live="polite"></p>
+
+        </form>
+
+    </section>
+
+    <section>
+
+        <div class="reviews-header">
+            <h2>Відгуки користувачів</h2>
+            <span class="reviews-count" id="reviewsCount">0 відгуків</span>
+        </div>
+
+        <div id="comments">
+            <div class="empty">Завантаження відгуків...</div>
+        </div>
+
+    </section>
+
+    <footer class="footer">
+        © 2026 Книга відгуків. Усі права захищені.
+    </footer>
+
+</div>
+
+<script>
+
+    const form = document.getElementById("commentForm");
+    const commentsContainer = document.getElementById("comments");
+    const message = document.getElementById("message");
+    const submitButton = document.getElementById("submitButton");
+    const reviewsCount = document.getElementById("reviewsCount");
+
+    // Відображення повідомлення
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = type;
+    }
+
+    // Формування правильного підпису кількості відгуків
+    function getReviewsLabel(count) {
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+            return count + " відгуків";
+        }
+
+        if (lastDigit === 1) {
+            return count + " відгук";
+        }
+
+        if (lastDigit >= 2 && lastDigit <= 4) {
+            return count + " відгуки";
+        }
+
+        return count + " відгуків";
+    }
+
+    // Завантаження відгуків
+    async function loadComments() {
+
+        try {
+            const response = await fetch("comments");
+
+            if (!response.ok) {
+                throw new Error("Помилка завантаження");
+            }
+
+            const comments = await response.json();
+
+            commentsContainer.innerHTML = "";
+
+            reviewsCount.textContent = getReviewsLabel(comments.length);
+
+            if (comments.length === 0) {
+                commentsContainer.innerHTML = `
+                    <div class="empty">
+                        Поки що відгуків немає.<br>
+                        Станьте першим, хто залишить свій відгук!
+                    </div>
+                `;
+                return;
+            }
+
+            comments.forEach(comment => {
+
+                const card = document.createElement("div");
+                card.className = "comment";
+
+                const avatar = document.createElement("div");
+                avatar.className = "avatar";
+                avatar.textContent = comment.author
+                    ? comment.author.charAt(0).toUpperCase()
+                    : "?";
+
+                const content = document.createElement("div");
+                content.className = "comment-content";
+
+                const top = document.createElement("div");
+                top.className = "comment-top";
+
+                const author = document.createElement("span");
+                author.className = "comment-author";
+                author.textContent = comment.author;
+
+                const date = document.createElement("span");
+                date.className = "comment-date";
+                date.textContent = comment.createdAt;
+
+                const text = document.createElement("p");
+                text.className = "comment-text";
+                text.textContent = comment.text;
+
+                top.append(author, date);
+                content.append(top, text);
+                card.append(avatar, content);
+
+                commentsContainer.appendChild(card);
+            });
+
+        } catch (error) {
+            commentsContainer.innerHTML = `
+                <div class="empty">
+                    Не вдалося завантажити відгуки.
+                </div>
+            `;
+        }
+    }
+
+    // Надсилання нового відгуку
+    form.addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        message.className = "";
+        message.textContent = "";
+
+        const formData = new URLSearchParams(new FormData(form));
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Надсилання...";
+
+        try {
+
+            const response = await fetch("comments", {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/x-www-form-urlencoded;charset=UTF-8"
+                },
+                body: formData
+            });
+
+            if (response.status === 204) {
+
+                showMessage("✓ Відгук успішно додано!", "success");
+
+                form.reset();
+
+                await loadComments();
+
+            } else if (response.status === 400) {
+
+                showMessage(
+                    "Перевірте правильність введених даних.",
+                    "error"
+                );
+
+            } else {
+
+                showMessage(
+                    "Сталася помилка сервера. Спробуйте пізніше.",
+                    "error"
+                );
+            }
+
+        } catch (error) {
+
+            showMessage(
+                "Не вдалося з'єднатися із сервером.",
+                "error"
+            );
+
+        } finally {
+
+            submitButton.disabled = false;
+            submitButton.textContent = "✈ Залишити відгук";
+
+        }
+    });
+
+    // Завантаження відгуків при відкритті сторінки
+    loadComments();
+
+</script>
+
+</body>
+</html>
